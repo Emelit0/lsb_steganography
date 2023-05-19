@@ -5,7 +5,7 @@
 #define MAX_FILENAME_LENGTH 100
 #define MAX_FILE_EXTENSION_LENGTH 10
 #define MAX_FILEPATH_LENGTH 256
-#define MAX_FILESIZE 10000000000
+#define MAX_FILESIZE 100000000
 
 
 #include <stdio.h>
@@ -15,17 +15,7 @@
 #include <time.h>
 
 
-
-int main() {
- char filePath[MAX_FILEPATH_LENGTH];
-
-    printf("Enter the path of the image file: ");
-    fgets(filePath, MAX_FILESIZE, stdin);
-
-    //remove trailing newline
-    filePath[strcspn(filePath, "\n")] = '\0';
-
-    printf("%s", filePath);
+int readImageFile(char *filePath) {
 
     //open the file
     FILE *imageFile = fopen(filePath, "rb");
@@ -34,13 +24,10 @@ int main() {
         return 1;
     }
 
-
     //read the file data
     fseek(imageFile, 0, SEEK_END);
     long fileSize = ftell(imageFile);
     fseek(imageFile, 0, SEEK_SET);
-
-
 
     //allocate memory for the file content
     unsigned char *fileContent = malloc(fileSize);
@@ -49,8 +36,8 @@ int main() {
         return 1;
     }
 
-    size_t result = fread(fileContent, 1, fileSize, imageFile);
-    if (result != fileSize) {
+    size_t image_data = fread(fileContent, 1, fileSize, imageFile);
+    if (image_data != fileSize) {
         printf("Error: could not read file 3\n");
         fclose(imageFile);
         free(fileContent);
@@ -61,9 +48,38 @@ int main() {
 
     fclose(imageFile);
     free(fileContent);
+}
+
+char readTextInput() {
+    char path[] = "/home/emelito/Downloads/";
+    char message[MAX_MESSAGE_LENGTH];
+    printf("Enter the message you want to hide: ");
+    fgets(message, MAX_MESSAGE_LENGTH, stdin);
+
+
+    //remove trailing newline
+    message[strcspn(message, "\n")] = '\0';
+
+
+}
+
+int writeTextFile(char *message) {
+
+}
+
+int main() {
+    char filePath[MAX_FILEPATH_LENGTH];
+
+    printf("Enter the path of the image file: ");
+    fgets(filePath, MAX_FILESIZE, stdin);
+
+    //remove trailing newline
+    filePath[strcspn(filePath, "\n")] = '\0';
+
+    printf("%s", filePath);
+
+    readImageFile(filePath);
 
     return 0;
-
-
 }
 
