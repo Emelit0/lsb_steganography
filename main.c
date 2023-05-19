@@ -56,11 +56,8 @@ char readTextInput() {
     printf("Enter the message you want to hide: ");
     fgets(message, MAX_MESSAGE_LENGTH, stdin);
 
-
     //remove trailing newline
     message[strcspn(message, "\n")] = '\0';
-
-
 }
 
 int writeTextFile(char *message) {
@@ -79,6 +76,12 @@ int main() {
     printf("%s", filePath);
 
     readImageFile(filePath);
+
+    char secret = readTextInput();
+    int *message = (int *) &secret;
+
+    writeTextFile((char *) message);
+
 
     return 0;
 }
