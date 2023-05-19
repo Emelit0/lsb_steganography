@@ -5,7 +5,7 @@
 #define MAX_FILENAME_LENGTH 100
 #define MAX_FILE_EXTENSION_LENGTH 10
 #define MAX_FILEPATH_LENGTH 256
-#define MAX_FILESIZE 1000000
+#define MAX_FILESIZE 10000000000
 
 
 #include <stdio.h>
@@ -25,32 +25,39 @@ int main() {
     //remove trailing newline
     filePath[strcspn(filePath, "\n")] = '\0';
 
+    printf("%s", filePath);
+
     //open the file
     FILE *imageFile = fopen(filePath, "rb");
     if (imageFile == NULL) {
-        printf("Error: could not open file\n");
+        printf("Error: could not open file 1\n");
         return 1;
     }
+
 
     //read the file data
     fseek(imageFile, 0, SEEK_END);
     long fileSize = ftell(imageFile);
     fseek(imageFile, 0, SEEK_SET);
 
+
+
     //allocate memory for the file content
     unsigned char *fileContent = malloc(fileSize);
     if (fileContent == NULL) {
-        printf("Error: could not allocate memory for file\n");
+        printf("Error: could not allocate memory for file 2\n");
         return 1;
     }
 
     size_t result = fread(fileContent, 1, fileSize, imageFile);
     if (result != fileSize) {
-        printf("Error: could not read file\n");
+        printf("Error: could not read file 3\n");
         fclose(imageFile);
         free(fileContent);
         return 1;
     }
+
+    printf("file successfully read\n");
 
     fclose(imageFile);
     free(fileContent);
