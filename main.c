@@ -66,9 +66,22 @@ int writeTextFile(char *message) {
 
 int main() {
     char filePath[MAX_FILEPATH_LENGTH];
+    FILE *destination_file;
 
     printf("Enter the path of the image file: ");
     fgets(filePath, MAX_FILESIZE, stdin);
+
+    printf("Enter the destination path of the manipulated image file:");
+    scanf("%s", filePath);
+
+    //need to make a copy of the selected file and store the manipulated file in a different location!!!
+    //open the destination file for writing
+    destination_file = fopen(filePath, "wb");
+    if (destination_file == NULL) {
+        printf("Error: could not open file 1\n");
+        fclose(destination_file);
+        exit(EXIT_FAILURE);
+    }
 
     //remove trailing newline
     filePath[strcspn(filePath, "\n")] = '\0';
