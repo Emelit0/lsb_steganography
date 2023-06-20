@@ -50,19 +50,6 @@ int readImageFile(char *filePath) {
     free(fileContent);
 }
 
-char readTextInput() {
-    char path[] = "/home/emelito/Downloads/";
-    char message[MAX_MESSAGE_LENGTH];
-    printf("Enter the message you want to hide: ");
-    fgets(message, MAX_MESSAGE_LENGTH, stdin);
-
-    //remove trailing newline
-    message[strcspn(message, "\n")] = '\0';
-}
-
-int writeTextFile(char *message) {
-
-}
 
 int createSecret() {
     char inputString[MAX_MESSAGE_LENGTH];
@@ -84,7 +71,6 @@ int createSecret() {
 }
 
 int main() {
-//    char filePath[MAX_FILEPATH_LENGTH];
 //    FILE *destination_file;
 //
 //    printf("Enter the path of the image file: ");
