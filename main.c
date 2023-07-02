@@ -17,27 +17,30 @@
 #include "decode.h"
 
 // create a text file containing the secret message
-int createSecret() {
-    char inputString[MAX_MESSAGE_LENGTH];
-
-    printf("Enter the message you want to hide: ");
-    fgets(inputString, sizeof(inputString), stdin);
-
-
-    FILE *textfile;
-    textfile = fopen("secret.txt", "w");
-    if (textfile == NULL) {
-        printf("Error: could not open file 1\n");
-        fclose(textfile);
-        exit(EXIT_FAILURE);
-    }
-
-    fprintf(textfile, "%s", inputString);
-    fclose(textfile);
-}
+//int createSecret() {
+//    char inputString[MAX_MESSAGE_LENGTH];
+//
+//    printf("Enter the message you want to hide: ");
+//    fgets(inputString, sizeof(inputString), stdin);
+//
+//
+//    FILE *textfile;
+//    textfile = fopen("secret.txt", "w");
+//    if (textfile == NULL) {
+//        printf("Error: could not open file 1\n");
+//        fclose(textfile);
+//        exit(EXIT_FAILURE);
+//    }
+//
+//    fprintf(textfile, "%s", inputString);
+//    fclose(textfile);
+//}
 
 int main(int argc, char **argv)
 {
+        // create secret file
+       // createSecret();
+
             // validate input arguments
             if (argc > 1 && argc < 8) {
                 //validate operation
