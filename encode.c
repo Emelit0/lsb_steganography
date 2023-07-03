@@ -178,9 +178,71 @@ Status check_capacity(EncodeInfo *encInfo)
 	return e_failure;
 }
 
+/* Encoding the secret data into stego image
+ * Input: File info source image, stego image and secret file
+ * Output: Encode the secret data into stego image
+ * Return: e_success or e_failure
+ */
+Status do_encoding(EncodeInfo *encInfo)
+{
+    // open required files
+    printf("INFO: Opening required files\n");
+    if (open_encode_files(encInfo) == e_success)
+    {
+        printf("INFO: Opened required files\n");
+        printf("INFO: ## Encoding in progress ##\n");
+        // check size of secret file
+        printf("INFO: Checking for size\n");
+        encInfo->size_secret_file = get_file_size(encInfo->fptr_secret);
+        if (encInfo->size_secret_file)
+        {
+            printf("INFO: Done. Size = %ld bytes\n", encInfo->size_secret_file);
+            printf("INFO: Checking for %s capacity\n", encInfo->secret_fname);
+            encInfo->image_capacity = image_size_for_bmp(encInfo->fptr_src_image);
+                    if (check_capacity(encInfo) == e_success)
+                    {
+                        printf("INFO: Done, secret fits\n");
 
+                        // check for output .bmp and open required files
+                        if (encInfo->stego_image_fname == NULL)
+                        {
+                            printf("INFO: Output file not mentioned. Using default file name\n");
+                            encInfo->stego_image_fname = "stego.bmp";
+                            printf("INFO: Created stego.bmp file as default output file\n");
+                                if (open_encode_files(encInfo) == e_failure)
+                                {
+                                    fprintf(stderr, "ERROR: %s function failed \n", "open_encode_files");
+                                    return e_failure;
+                                }
+                        }
+                        else
+                        {
+                            printf("INFO: Output file mentioned. Using %s as output file\n", encInfo->stego_image_fname);
+                            if (open_encode_files(encInfo) == e_failure)
+                            {
+                                fprintf(stderr, "ERROR: %s function failed \n", "open_encode_files");
+                                return e_failure;
+                            }
+                            printf("INFO: Opened required file %s\n", encInfo->stego_image_fname);
+                        }
 
+                        // copy bmp image header
+                        printf("INFO: Copying image header\n");
+                        if (copy_bmp_header(encInfo->fptr_src_image, encInfo->fptr_stego_image) == e_success)
+                        {
+                            printf("INFO: Done, copied image header\n");
 
+                            //Encode secret string in destination image
+                            printf("INFO: Encoding secret string signature\n");
+                                if(encode_secret_string(encInfo->password, encInfo) == e_success)
+                                {
+
+                                }
+                        }
+                    }
+        }
+    }
+}
 /* Get File pointers for i/p and o/p files
  * Input: Image file, Secret file, Stego Image file
  * Output: File pointers to the above files
@@ -239,6 +301,44 @@ Status open_encode_files(EncodeInfo *encodeInfo)
     // No failure return e_success
     return e_success;
 }
+
+/* Copy bmp image header to destination file
+ * Input: File pointers to source and destination files
+ * Output: Copy the bmp image header to destination file
+ * Return Value: e_success or e_failure
+ */
+Status copy_bmp_header(FILE *fptr_src_image, FILE *fptr_dest_image)
+{
+    // get source bmp image header
+        uint meta_data;
+        fseek(fptr_src_image, 10L, SEEK_SET);
+        fread(&meta_data, sizeof(int), 1, fptr_src_image);
+        rewind(fptr_src_image);
+
+        char header_data[meta_data];
+        fread(header_data, sizeof(char), (size_t)meta_data, fptr_src_image);
+        if (ferror(fptr_src_image))
+        {
+                fprintf(stderr, "ERROR: %s function failed while reading data from source image\n", "fread");
+                clearerr(fptr_src_image);
+                return e_failure;
+        }
+        fwrite(header_data, sizeof(char), (size_t)meta_data, fptr_dest_image);
+        if (ferror(fptr_dest_image))
+        {
+                fprintf(stderr, "ERROR: %s function failed while writing data to destination image\n", "fwrite");
+                clearerr(fptr_dest_image);
+                return e_failure;
+        }
+        return e_success;
+}
+
+
+/* Encode secret string signature into stego image
+ * Input: Secret string, EncodeInfo structure
+ * Output: Encoded secret string in stego image
+ * Return Value: e_success or e_failure, on file errors
+ */
 
 
 
