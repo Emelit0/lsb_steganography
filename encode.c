@@ -339,8 +339,92 @@ Status copy_bmp_header(FILE *fptr_src_image, FILE *fptr_dest_image)
  * Output: Encoded secret string in stego image
  * Return Value: e_success or e_failure, on file errors
  */
+Status encode_secret_string(const char *secret_string, EncodeInfo *encInfo)
+{
+        if (secret_string != NULL)
+        {
+                for (uint i = 0; i < encInfo->password_size; i++)
+                {
+                        // copy * to secret_data
+                       if ((strncpy(encInfo->secret_data, (secret_string + i), 1)) == NULL)
+                        {
+                            return e_failure;
+                        }
+                        // Divide secrete_data to 8 bits i.e MSB at 0th index and LSB at 7th index
+                        fread(encInfo->image_data, sizeof(char), MAX_IMAGE_BUF_SIZE, encInfo->fptr_src_image);
+                        if (ferror(encInfo->fptr_src_image))
+                        {
+                            fprintf(stderr,"Error: While reading the data from source image file\n");
+                            clearerr(encInfo->fptr_src_image);
+                            return e_failure;
+                        }
+                        if (encode_byte_to_lsb(encInfo->secret_data[0], encInfo->image_data) == e_failure)
+                        {
+                            fprintf(stderr,"Error: %s function failed\n", "encode_byte_to_lsb()");
+                            return e_failure;
+                        }
+                        fwrite(encInfo->image_data, sizeof(char), MAX_IMAGE_BUF_SIZE, encInfo->fptr_stego_image);
+                        if (ferror(encInfo->fptr_stego_image))
+                        {
+                            fprintf(stderr,"Error: While writing the data to destination image file\n");
+                            clearerr(encInfo->fptr_stego_image);
+                            return e_failure;
+                        }
+                }
+        }
 
+        // Encode "*" after password or Enccode "*"
+        if ((strncpy(encInfo->secret_data, secret_string, 1)) == NULL)
+        {
+            return e_failure;
+        }
 
+        //Divide secrete_data to 8 bits i.e MSB at 0th index and LSB at 7th index
+        fread(encInfo->image_data, sizeof(char), MAX_IMAGE_BUF_SIZE, encInfo->fptr_src_image);
+        if (ferror(encInfo->fptr_src_image))
+        {
+            fprintf(stderr,"Error: While reading the data from source image file\n");
+            clearerr(encInfo->fptr_src_image);
+            return e_failure;
+        }
+        if (encode_byte_to_lsb(encInfo->secret_data[0], encInfo->image_data) == e_failure)
+        {
+            fprintf(stderr,"Error: %s function failed\n", "encode_byte_to_lsb()");
+            return e_failure;
+        }
+        fwrite(encInfo->image_data, sizeof(char), MAX_IMAGE_BUF_SIZE, encInfo->fptr_stego_image);
+        if (ferror(encInfo->fptr_stego_image))
+        {
+            fprintf(stderr,"Error: While writing the data to destination image file\n");
+            clearerr(encInfo->fptr_stego_image);
+            return e_failure;
+        }
+        return e_success;
+
+}
+
+/* Encodes secret byte data to image 8 byte data
+ * Input: Secret 1 byte data and Image 8 byte data
+ * Output: Encode data to image_buffer
+ * Return: e_success or e_failure
+ */
+Status encode_byte_to_lsb(char data, char *image_buffer)
+{
+        unsigned char mask = 0x80;
+        for(uint i = 0; i < MAX_IMAGE_BUF_SIZE; i++)
+        {
+            if ( data & mask)
+            {
+                image_buffer[i] = (image_buffer[i] | (unsigned char) (0x01));
+            }
+            else
+            {
+                image_buffer[i] = (image_buffer[i] & (unsigned char) (~(0x01)));
+            }
+            mask >>= 1;
+        }
+        return e_success;
+}
 
 
 //void write_secret(FILE *secret) {
