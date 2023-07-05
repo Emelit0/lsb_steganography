@@ -325,10 +325,14 @@ Status do_encoding(EncodeInfo *encInfo)
     }
     else
     {
-        fprintf(stderr, "ERROR: %s function failed \n", "check_operation_type");
-        return e_failure;
+        fprintf(stderr, "ERROR: %s function failed \n", "open_encode_files()");
+        return 1;
     }
+
+        return e_success;
 }
+
+
 /* Get File pointers for i/p and o/p files
  * Input: Image file, Secret file, Stego Image file
  * Output: File pointers to the above files
