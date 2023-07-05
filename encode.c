@@ -218,12 +218,12 @@ Status do_encoding(EncodeInfo *encInfo)
                         else
                         {
                             printf("INFO: Output file mentioned. Using %s as output file\n", encInfo->stego_image_fname);
-                            if (open_encode_files(encInfo) == e_failure)
-                            {
-                                fprintf(stderr, "ERROR: %s function failed \n", "open_encode_files");
-                                return e_failure;
-                            }
-                            printf("INFO: Opened required file %s\n", encInfo->stego_image_fname);
+                                if (open_encode_files(encInfo) == e_failure)
+                                {
+                                    fprintf(stderr, "ERROR: %s function failed \n", "open_encode_files");
+                                    return e_failure;
+                                }
+                                printf("INFO: Opened required file %s\n", encInfo->stego_image_fname);
                         }
 
                         // copy bmp image header
@@ -236,11 +236,97 @@ Status do_encoding(EncodeInfo *encInfo)
                             printf("INFO: Encoding secret string signature\n");
                                 if(encode_secret_string(encInfo->password, encInfo) == e_success)
                                 {
+                                    printf("INFO: Done, encoded secret string signature\n");
 
+                                        //Encode secret file extn size in destination image
+                                        printf("INFO: Encoding secret file extension size\n");
+                                        if (encode_secret_file_extn_size(encInfo) == e_success)
+                                        {
+                                            printf("INFO: Done, encoded secret file extension size\n");
+
+                                                //Encode secret file extension
+                                                printf("INFO: Encoding secret file extension\n");
+                                                if (encode_secret_file_extn(encInfo) == e_success)
+                                                {
+                                                    printf("INFO: Done, encoded secret file extension\n");
+
+                                                        //Encode secret file size
+                                                        printf("INFO: Encoding %s File Size\n", encInfo->secret_fname);
+                                                        if (encode_secret_file_size(encInfo) == e_success)
+                                                        {
+                                                            printf("INFO: Done, encoded %s File Size\n", encInfo->secret_fname);
+
+                                                                //Encode secret file data
+                                                                printf("INFO: Encoding %s File data\n", encInfo->secret_fname);
+                                                                if (encode_secret_file_data(encInfo) == e_success)
+                                                                {
+                                                                    printf("INFO: Done, encoded %s File data\n", encInfo->secret_fname);
+
+                                                                        // Copy remianing image data bytes from src to stego image
+                                                                        printf("INFO: Copying remaining image data\n");
+                                                                        if (copy_remaining_img_data(encInfo->fptr_src_image, encInfo->fptr_stego_image) == e_success)
+                                                                        {
+                                                                            printf("INFO: Done, copied remaining image data\n");
+                                                                            printf("INFO: ## Encoding done ##\n");
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            fprintf(stderr, "ERROR: %s function failed \n", "copy_remaining_img_data");
+                                                                            return e_failure;
+                                                                        }
+                                                                }
+                                                                else
+                                                                {
+                                                                    fprintf(stderr, "ERROR: %s function failed \n", "encode_secret_file_data");
+                                                                    return e_failure;
+                                                                }
+                                                        }
+                                                        else
+                                                        {
+                                                            fprintf(stderr, "ERROR: %s function failed \n", "encode_secret_file_size");
+                                                            return e_failure;
+                                                        }
+                                                }
+                                                else
+                                                {
+                                                    fprintf(stderr, "ERROR: %s function failed \n", "encode_secret_file_extn");
+                                                    return e_failure;
+                                                }
+
+                                        }
+                                        else
+                                        {
+                                            fprintf(stderr, "ERROR: %s function failed \n", "encode_secret_file_extn_size");
+                                            return e_failure;
+                                        }
+                                }
+                                else
+                                {
+                                    fprintf(stderr, "ERROR: %s function failed \n", "encode_secret_string");
                                 }
                         }
+                        else
+                        {
+                            fprintf(stderr, "ERROR: %s function failed \n", "copy_bmp_header");
+                            return e_failure;
+                        }
+                    }
+                    else
+                    {
+                        fprintf(stderr, "ERROR: %s function failed \n", "check_capacity");
+                        return e_failure;
                     }
         }
+        else
+        {
+            fprintf(stderr, "ERROR: %s function failed \n", "get_file_size");
+            return e_failure;
+        }
+    }
+    else
+    {
+        fprintf(stderr, "ERROR: %s function failed \n", "check_operation_type");
+        return e_failure;
     }
 }
 /* Get File pointers for i/p and o/p files
