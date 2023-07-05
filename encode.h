@@ -52,8 +52,10 @@ uint get_file_size(FILE *fptr);
 Status copy_bmp_header(FILE *fptr_src_image, FILE *fptr_dest_image);
 /* Encode Magic String */
 Status encode_secret_string(const char *secret_string, EncodeInfo *encInfo);
-/* Encode secret file extenstion */
+/* Encode secret file extension */
 Status encode_secret_file_extn(const char *file_extn, EncodeInfo *encInfo);
+/* Encode secret file extension size */
+Status encode_secret_file_extn_size(int extn_size, EncodeInfo *encInfo);
 /* Encode secret file size */
 Status encode_secret_file_size(long file_size, EncodeInfo *encInfo);
 /* Encode password */
