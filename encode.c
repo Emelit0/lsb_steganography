@@ -595,3 +595,37 @@ Status encode_secret_file_extn(EncodeInfo *encInfo)
 	return e_success;
 }
 
+/* Encode secret file size data to stego image
+ * Input: Files info
+ * Output: Encode secret file size data to stego image
+ * Return: e_success or e_failure
+ */
+Status encode_secret_file_size(EncodeInfo *encInfo)
+{
+	uint mask = 0x80000000;
+	uint len = (uint) encInfo->size_secret_file;
+	uint size_bits = MAX_IMAGE_BUF_SIZE * (uint) sizeof(int);
+	char data[size_bits];
+	// Divide secrete_data to 8 bits i.e MSB at 0th index and LSB at 31th index
+	for (int i = 0; i < size_bits; i++)
+	{
+		if ((uint) len & mask)
+		{
+			data[i] = 1;
+		}
+		else
+		{
+			data[i] = 0;
+		}
+		mask >>= 1;
+		data[i] = (char) ((char) (fgetc(encInfo->fptr_src_image) & ~(0x01))| (data[i]));
+	}
+	fwrite(data, sizeof(char), (size_t) size_bits, encInfo->fptr_stego_image);
+	if (ferror(encInfo->fptr_stego_image))
+	{
+ 		fprintf(stderr,"Error: While writing the data to destination image file\n");
+		clearerr(encInfo->fptr_stego_image);
+		return e_failure;
+	}
+	return e_success;
+}
