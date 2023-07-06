@@ -517,34 +517,52 @@ Status encode_byte_to_lsb(char data, char *image_buffer)
 }
 
 
-//void write_secret(FILE *secret) {
-//    char ch;
-//    while ((ch = getchar()) != EOF) {
-//        fputc(ch, secret); //write secret into file
-//    }
-//}
-//
-//// get size of secret file
-//int secret_size(FILE *secret) {
-//    int size;
-//    fseek(secret, 0, SEEK_END); // seek to end of file
-//    size = ftell(secret); // get current file pointer
-//    fseek(secret, 0, SEEK_SET); // seek back to beginning of file
-//    return size;
-//}
-//
-//
-//void readBMPHeader(FILE *filePath, unsigned char *header) {
-//    fseek(filePath, 0, SEEK_SET);
-//    fread(header, sizeof(unsigned char), 54, filePath);
-//};
-//
-//void writeBMPHeader(FILE *filePath , FILE *outputFile) {
-//    fseek(filePath, 0, SEEK_SET);
-//    unsigned char header[54];
-//    fread(header, sizeof(unsigned char), 54, filePath);
-//    fwrite(header, sizeof(unsigned char), 54, outputFile);
-//};
+/* Encode secret file extension size into stego image
+ * Input: EncodeInfo structure
+ * Output: Encoded secret file extension size in stego image
+ * Return Value: e_success or e_failure, on file errors
+ */
+
+//difference
+Status encode_secret_file_extn_size(EncodeInfo *encInfo)
+{
+   uint mask = 0x80000000;
+   uint len;
+   for (len = 0; (len < MAX_FILE_SUFFIX) && (encInfo->secret_file_extn[len] != '\0'); len++);
+   uint size_bits = MAX_IMAGE_BUF_SIZE * (uint)sizeof(int);
+   char data[size_bits];
+   //divide secret_data to 8 bits i.e MSB at 0th index and LSB at 7th index
+    for (uint i = 0; i < size_bits; i++)
+    {
+         if (len & mask)
+         {
+              data[i] = (data[i] | (unsigned char) (0x01));
+         }
+         else
+         {
+              data[i] = (data[i] & (unsigned char) (~(0x01)));
+         }
+         mask >>= 1;
+         data[i] = (char) ((char) (fgetc(encInfo->fptr_src_image) & (~(0x01))) | data[i]);
+
+    }
+    fwrite(data, sizeof(char), size_bits, encInfo->fptr_stego_image);
+    if (ferror(encInfo->fptr_stego_image))
+    {
+        fprintf(stderr,"Error: While writing the data to destination image file\n");
+        clearerr(encInfo->fptr_stego_image);
+        return e_failure;
+    }
+    return e_success;
+}
 
 
+/* Encode secret file extension into stego image
+ * Input: EncodeInfo structure
+ * Output: Encoded secret file extension in stego image
+ * Return Value: e_success or e_failure, on file errors
+ */
+Status encode_secret_file_extn(EncodeInfo *encInfo)
+{
 
+}
