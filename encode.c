@@ -559,10 +559,39 @@ Status encode_secret_file_extn_size(EncodeInfo *encInfo)
 
 /* Encode secret file extension into stego image
  * Input: EncodeInfo structure
- * Output: Encoded secret file extension in stego image
+ * Output: Copy source image data to stego image data
  * Return Value: e_success or e_failure, on file errors
  */
+
+
 Status encode_secret_file_extn(EncodeInfo *encInfo)
 {
+    uint len;
+    for (len = 0; (len < MAX_FILE_SUFFIX) && (encInfo->secret_file_extn[len] != '\0'); len++);
+	// Divide secrete_data to 8 bits i.e MSB at 0th index and LSB at ((len * 8) - 1)th index
 
+	for (uint i = 0; i < len; i++)
+	{
+		fread(encInfo->image_data, sizeof(char), MAX_IMAGE_BUF_SIZE, encInfo->fptr_src_image);
+		if (ferror(encInfo->fptr_src_image))
+		{
+			fprintf(stderr,"Error: While reading the data from source nimage file\n");
+			clearerr(encInfo->fptr_src_image);
+			return e_failure;
+		}
+		if (encode_byte_to_lsb(encInfo->secret_file_extn[i], encInfo->image_data) == e_failure)
+		{
+			fprintf(stderr,"Error: %s function failed\n", "encode_byte_to_lsb()");
+			return e_failure;
+		}
+		fwrite(encInfo->image_data, sizeof(char), MAX_IMAGE_BUF_SIZE, encInfo->fptr_stego_image);
+		if (ferror(encInfo->fptr_stego_image))
+		{
+			fprintf(stderr,"Error: While writing the data to destination image file\n");
+			clearerr(encInfo->fptr_stego_image);
+			return e_failure;
+		}
+	}
+	return e_success;
 }
+
