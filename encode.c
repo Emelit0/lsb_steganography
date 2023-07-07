@@ -644,7 +644,15 @@ Status encode_secret_file_data(EncodeInfo *encInfo)
         return e_failure;
     }
 
+    //Encoding the text in secret file to destination image file
+    if (encode_secret_data_to_image(data, encInfo->size_secret_file, encInfo->fptr_src_image, encInfo->fptr_stego_image) == e_failure)
+    {
+        fprintf(stderr,"Error: %s function failed\n", "encode_secret_data_to_image()");
+        return e_failure;
+    }
+    return e_success;
 }
+
 
 /* Encode secret data into image data
  * Input: Secret data, secret data size, File pointer of source image and stego image files
@@ -676,4 +684,45 @@ Status encode_secret_data_to_image(char *secret_data, int size_secret_data, FILE
            return e_failure;
        }
    }
+}
+
+
+/* Copy remaining source image data to stego image
+ * Input: File pointer of source and stego image
+ * Output: Remaining image data copied from source image
+ * Return: e_success or e_failure
+ */
+Status copy_remaining_img_data(FILE *fptr_src, FILE *fptr_dest)
+{
+	int ch;
+	while ((ch = getc(fptr_src)) != EOF)  // EOF is macro with value -1
+    {
+		if (ferror(fptr_src))
+		{
+			fprintf(stderr, "Error: unable to read from %s", "Source image file");
+			clearerr(fptr_src);
+			return e_failure;
+		}
+      	putc(ch, fptr_dest);
+		if (ferror(fptr_dest))
+		{
+			fprintf(stderr, "Error: unable to write to  %s", "Destination image file");
+			clearerr(fptr_dest);
+			return e_failure;
+		}
+    }
+	return e_success;
+}
+
+/* Get the file size
+ * Input: File pointer of source image
+ * Return: File size in bytes
+ */
+uint get_file_size(FILE *fptr)
+{
+    uint size;
+    fseek(fptr, 0L, SEEK_END);
+    size = ftell(fptr);
+    fseek(fptr, 0L, SEEK_SET);
+    return size;
 }
