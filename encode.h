@@ -62,6 +62,8 @@ Status encode_secret_file_size(EncodeInfo *encInfo);
 Status encode_password(const char *password, EncodeInfo *encInfo);
 /* Encode secret file data*/
 Status encode_secret_file_data(EncodeInfo *encInfo);
+/* Encode secret file data to dest image */
+Status encode_secret_data_to_image(char *secret_data, int size_secret_data, FILE *fptr_src, FILE *fptr_dest);
 /* Encode a byte into LSB of image data array */
 Status encode_byte_to_lsb(char data, char *image_buffer);
 /* Encode secret file data size */
