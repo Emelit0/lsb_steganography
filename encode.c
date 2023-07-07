@@ -562,8 +562,6 @@ Status encode_secret_file_extn_size(EncodeInfo *encInfo)
  * Output: Copy source image data to stego image data
  * Return Value: e_success or e_failure, on file errors
  */
-
-
 Status encode_secret_file_extn(EncodeInfo *encInfo)
 {
     uint len;
@@ -628,4 +626,54 @@ Status encode_secret_file_size(EncodeInfo *encInfo)
 		return e_failure;
 	}
 	return e_success;
+}
+
+/* Encode secret file data to steog image
+ * Input: Files info
+ * Output: Encode secret file data to stego image
+ * Return: e_success or e_failure
+ */
+Status encode_secret_file_data(EncodeInfo *encInfo)
+{
+    char data[(int) encInfo->size_secret_file];
+    fread(data, sizeof(char), (size_t) encInfo->size_secret_file, encInfo->fptr_secret);
+    if (ferror(encInfo->fptr_secret))
+    {
+        fprintf(stderr,"Error: While reading the data from secret file\n");
+        clearerr(encInfo->fptr_secret);
+        return e_failure;
+    }
+
+}
+
+/* Encode secret data into image data
+ * Input: Secret data, secret data size, File pointer of source image and stego image files
+ * Output: Gets source image data and encodes it with secret data by calling encode_byte_to_lsb() function
+ * Return: e_success or e_failure
+ */
+Status encode_secret_data_to_image(char *secret_data, int size_secret_data, FILE *fptr_src_image, FILE *fptr_stego_image)
+{
+   char image_buffer[MAX_IMAGE_BUF_SIZE];
+   for (uint i = 0; i < size_secret_data; i++)
+   {
+       fread(image_buffer, sizeof(char), MAX_IMAGE_BUF_SIZE, fptr_src_image);
+       if (ferror(fptr_src_image))
+       {
+           fprintf(stderr,"Error: While reading the data from source image file\n");
+           clearerr(fptr_src_image);
+           return e_failure;
+       }
+       if (encode_byte_to_lsb(secret_data[i], image_buffer) == e_failure)
+       {
+           fprintf(stderr,"Error: %s function failed\n", "encode_byte_to_lsb()");
+           return e_failure;
+       }
+       fwrite(image_buffer, sizeof(char), MAX_IMAGE_BUF_SIZE, fptr_stego_image);
+       if (ferror(fptr_stego_image))
+       {
+           fprintf(stderr,"Error: While writing the data to destination image file\n");
+           clearerr(fptr_stego_image);
+           return e_failure;
+       }
+   }
 }
