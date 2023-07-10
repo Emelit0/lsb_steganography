@@ -192,9 +192,48 @@ Status do_decoding(DecodeInfo *decInfo)
                                     return e_failure;
                                 }
                         }
+                        printf("INFO: Opened all required files\n");
+
+                        // Decoding file Size
+                        printf("INFO: Decoding file size\n");
+                        if (decode_file_size(decInfo) == e_success)
+                        {
+                               printf("INFO: Done decoding file size\n");
+
+                               // Decoding File Data
+                               printf("INFO: Decoding file data\n");
+                               if (decode_data_to_file(decInfo) == e_success)
+                               {
+                                       printf("INFO: Done decoding file data\n");
+                                       printf("INFO: Decoding completed\n");
+                                       return e_success;
+                               }
+                               else
+                               {
+                                        fprintf(stderr, "Error: %s function failed\n", "decode_data_to_file");
+                                        return e_failure;
+                               }
+                        }
+                        else
+                        {
+                                fprintf(stderr, "Error: %s function failed\n", "decode_file_size");
+                                return e_failure;
+                        }
+                }
+                else
+                {
+                        fprintf(stderr, "Error: %s function failed\n", "decode_secret_string");
+                        return e_failure;
                 }
 
         }
+        else
+        {
+                fprintf(stderr, "Error: %s function failed\n", "open_files_decode");
+                return e_failure;
+        }
+        printf("INFO: Done, decode process completed\n");
+        return e_success;
 }
 
 
