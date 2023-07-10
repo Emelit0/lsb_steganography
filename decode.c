@@ -79,3 +79,122 @@ Status read_and_validate_decode_args(int argc, char *argv[], DecodeInfo *decInfo
 
     return e_success;
 }
+
+
+/* Get File pointers for i/p and o/p files
+ * Input: Stego image file and Output file
+ * Output: File pointers to Stego image and output file
+ * Return: e_succcess or e_failure
+ */
+Status open_files_decode(DecodeInfo *decInfo)
+{
+        static int open_count = 0;
+        if (open_count == 0)
+        {
+                // Open Stego image file
+                decInfo->fptr_stego_image = fopen(decInfo->stego_image_fname, "r");
+                //Error handling
+                if (decInfo->fptr_stego_image == NULL)
+                {
+                    fprintf(stderr, "Error: Unable to open file %s\n", decInfo->stego_image_fname);
+                    return e_failure;
+                }
+                else
+                {
+                    printf("INFO: Opened %s\n", decInfo->stego_image_fname);
+                }
+                open_count++;
+        }
+        else
+        {
+                //Open output file
+                decInfo->fptr_output = fopen(decInfo->output_fname, "w");
+                //Error handling
+                if (decInfo->fptr_output == NULL)
+                {
+                    fprintf(stderr, "Error: Unable to open file %s\n", decInfo->output_fname);
+                    return e_failure;
+                }
+                else
+                {
+                    printf("INFO: Opened %s\n", decInfo->output_fname);
+                }
+        }
+
+        return e_success;
+}
+
+
+/* Decoding stego image to another file
+ * Input: Stego image file and output file
+ * Output: Decoded data to output file
+ * Return: e_success or e_failure
+ */
+Status do_decoding(DecodeInfo *decInfo)
+{
+        printf("INFO: ## Decoding steged file ##\n");
+        printf("INFO: Opening required files\n");
+
+        // Open required files
+        if (open_files_decode(decInfo) == e_success)
+        {
+                printf("INFO: Done\n");
+                uint raster_data;
+                fseek(decInfo->fptr_stego_image, 10L, SEEK_SET);
+                fread(&raster_data, sizeof(int), 1, decInfo->fptr_stego_image);
+                fseek(decInfo->fptr_stego_image, raster_data, SEEK_SET);
+                printf("INFO: Decoding Magic String\n");
+
+                // Decoding secret string signature
+                if (decode_secret_string(decInfo->password, decInfo) == e_success)
+                {
+                        printf("INFO: Done decoding secret string\n");
+
+                        //Check if output file is provided or not
+                        if (decInfo->output_fname == NULL)
+                        {
+
+                                if (strncmp(decInfo->output_file_extn, ".txt", 4) == 0)
+                                {
+                                        decInfo->output_fname = "decoded.txt";
+                                        printf("INFO: Output file not provided. Creating decoded.txt\n");
+                                }
+                                else if (strncmp(decInfo->output_file_extn, ".c", 2) == 0)
+                                {
+                                        decInfo->output_fname = "decoded.c";
+                                        printf("INFO: Output file not provided. Creating decoded.c\n");
+                                }
+                                else
+                                {
+                                        decInfo->output_fname = "decoded.sh";
+                                        printf("INFO: Output file not provided. Creating decoded.sh\n");
+                                }
+                                if (open_files_decode(decInfo) == e_success)
+                                {
+                                        printf("INFO: Opened %s\n", decInfo->output_fname);
+                                }
+                                else
+                                {
+                                    fprintf(stderr, "Error: %s function failed\n", "open_files_decode");
+                                    return e_failure;
+                                }
+                        }
+                        else
+                        {
+                                printf("INFO: Output file is provided\n");
+                                if(open_files_decode(decInfo) == e_success)
+                                {
+                                        printf("INFO: Opened %s\n", decInfo->output_fname);
+                                }
+                                else
+                                {
+                                    fprintf(stderr, "Error: %s function failed\n", "open_files_decode");
+                                    return e_failure;
+                                }
+                        }
+                }
+
+        }
+}
+
+
