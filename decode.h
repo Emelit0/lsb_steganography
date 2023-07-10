@@ -37,4 +37,13 @@ typedef struct
 
 
 
+/* Decode secret string */
+Status decode_secret_string(char *secret_string, DecodeInfo *decInfo);
+/* Decode the file size */
+Status decode_file_size(DecodeInfo *decInfo);
+/* Decode the data to the output file */
+Status decode_data_to_file(DecodeInfo *decInfo);
+
+
+
 #endif //LSB_STEGANOGRAPHY_DECODE_H
