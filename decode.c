@@ -232,8 +232,8 @@ Status do_decoding(DecodeInfo *decInfo)
                 fprintf(stderr, "Error: %s function failed\n", "open_files_decode");
                 return e_failure;
         }
-        printf("INFO: Done, decode process completed\n");
-        return e_success;
+//        printf("INFO: Done, decode process completed\n");
+//        return e_success;
 }
 
 
