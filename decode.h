@@ -43,7 +43,18 @@ Status decode_secret_string(char *secret_string, DecodeInfo *decInfo);
 Status decode_file_size(DecodeInfo *decInfo);
 /* Decode the data to the output file */
 Status decode_data_to_file(DecodeInfo *decInfo);
-
+/* Get the magic string */
+Status decode_magic_string(const char *magic_string, DecodeInfo *decInfo);
+/* Decode file extention size */
+Status decode_output_file_extn_size(DecodeInfo *decInfo);
+/* Decode file extenstion */
+Status decode_output_file_extn(uint extn_size, DecodeInfo *decInfo);
+/* Decode file size */
+Status decode_file_size(DecodeInfo *decInfo);
+/* Decoding file data */
+Status decode_data_to_file(DecodeInfo *decInfo);
+/* Decode a array of LSB into byte */
+Status decode_lsb_to_byte(char *decode_data, char *image_data);
 
 
 #endif //LSB_STEGANOGRAPHY_DECODE_H
