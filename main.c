@@ -1,13 +1,5 @@
 // Implementation of a c program tha uses lsb steganography to hide a message in a bitmap image
 
-#define MAX_MESSAGE_LENGTH 10000
-#define SECRET_KEY_LENGTH 32
-#define MAX_FILENAME_LENGTH 100
-#define MAX_FILE_EXTENSION_LENGTH 10
-#define MAX_FILEPATH_LENGTH 256
-#define MAX_FILESIZE 100000000
-
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -16,25 +8,6 @@
 #include "encode.h"
 #include "decode.h"
 
-// create a text file containing the secret message
-//int createSecret() {
-//    char inputString[MAX_MESSAGE_LENGTH];
-//
-//    printf("Enter the message you want to hide: ");
-//    fgets(inputString, sizeof(inputString), stdin);
-//
-//
-//    FILE *textfile;
-//    textfile = fopen("secret.txt", "w");
-//    if (textfile == NULL) {
-//        printf("Error: could not open file 1\n");
-//        fclose(textfile);
-//        exit(EXIT_FAILURE);
-//    }
-//
-//    fprintf(textfile, "%s", inputString);
-//    fclose(textfile);
-//}
 
 int main(int argc, char **argv)
 {
