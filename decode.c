@@ -202,16 +202,10 @@ Status do_decoding(DecodeInfo *decInfo)
 
                                // Decoding File Data
                                printf("INFO: Decoding file data\n");
-                               if (decode_data_to_file(decInfo) == e_success)
+                               if (decode_data_to_file(decInfo) == e_failure)
                                {
-                                       printf("INFO: Done decoding file data\n");
-                                       printf("INFO: Decoding completed\n");
-                                       return e_success;
-                               }
-                               else
-                               {
-                                        fprintf(stderr, "Error: %s function failed\n", "decode_data_to_file");
-                                        return e_failure;
+                                   fprintf(stderr, "Error: %s function failed\n", "decode_data_to_file");
+                                       return e_failure;
                                }
                         }
                         else
@@ -232,8 +226,8 @@ Status do_decoding(DecodeInfo *decInfo)
                 fprintf(stderr, "Error: %s function failed\n", "open_files_decode");
                 return e_failure;
         }
-//        printf("INFO: Done, decode process completed\n");
-//        return e_success;
+        printf("INFO: Done, decode process completed\n");
+        return e_success;
 }
 
 
