@@ -49,6 +49,12 @@ Status decode_output_file_extn_size(DecodeInfo *decInfo);
 Status decode_output_file_extn(uint extn_size, DecodeInfo *decInfo);
 /* Decode a array of LSB into byte */
 Status decode_lsb_to_byte(char *decode_data, char *image_data);
+/* Decoding the stego image */
+Status do_decoding(DecodeInfo *decInfo);
+/* Open Files required for decoding */
+Status open_files_decode(DecodeInfo *decInfo);
+/* Read and validate decode arguments argc & argv[] */
+Status read_and_validate_decode_args(int argc, char *argv[], DecodeInfo *decInfo);
 
 
 #endif //LSB_STEGANOGRAPHY_DECODE_H
