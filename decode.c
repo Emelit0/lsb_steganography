@@ -231,3 +231,68 @@ Status do_decoding(DecodeInfo *decInfo)
 }
 
 
+/* Decoding secret string from stego image
+ * Input: seccret string and Stego image file and output file
+ * Output: Proceed to decoding process if secret string is matched
+ * Return: e_success or e_failure
+ */
+Status decode_secret_string(char *password, DecodeInfo *decInfo)
+{
+    uint i;
+    if (password != NULL)
+    {
+            for (i=0; i < decInfo->password_size; i++)
+            {
+                fread(decInfo->image_data, sizeof(char), 8, decInfo->fptr_stego_image);
+                if (ferror(decInfo->fptr_stego_image))
+                {
+                    fprintf(stderr, "Error: Error reading the data from stego image\n");
+                    clearerr(decInfo->fptr_stego_image);
+                    return e_failure;
+                }
+
+                    if (decode_lsb_to_byte(decInfo->decode_data, decInfo->image_data) == e_success)
+                    {
+                            if (decInfo->decode_data[0] == magic_string[i])
+                            {
+                                continue;
+                            }
+                            else
+                            {
+                                fprintf(stderr,"Error: Incorrect passcode\n");
+                                return e_failure;
+                            }
+                    }
+                    else
+                    {
+                        fprintf(stderr, "Error: %s function failed\n","decode_lsb_to_byte()");
+                        return e_failure;
+                    }
+                }
+            }
+            fread(decInfo->image_data, sizeof(char), 8, decInfo->fptr_stego_image);
+            if (ferror(decInfo->fptr_stego_image))
+            {
+                fprintf(stderr,"Error: While reading the data from stego image file\n");
+                clearerr(decInfo->fptr_stego_image);
+                return e_failure;
+            }
+            if (decode_lsb_to_byte(decInfo->decode_data, decInfo->image_data) == e_success)
+            {
+                if (decInfo->decode_data[0] == '*')
+                {
+                        return e_success;
+                }
+                else
+                {
+                        fprintf(stderr,"Error: Incorrect passcode\n");
+                        return e_failure;
+                }
+        }
+        else
+        {
+            fprintf(stderr, "Error: %s function failed\n","decode_lsb_to_byte()");
+            return e_failure;
+        }
+    }
+}
