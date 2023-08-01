@@ -413,3 +413,19 @@ Status decode_data_to_file(DecodeInfo *decInfo)
 	return e_success;
 }
 
+
+/* Get lsb bit from stego image byte
+ * Input: Image_data array and decode_data character
+ * Output: Decode the image_data and stores the 1 byte data in decode_data
+ * Return: e_success or e_failure
+ */
+Status decode_lsb_to_byte(char *decode_data, char *image_data)
+{
+	decode_data[0] = 0;
+	for (uint i = 0; i < MAX_IMAGE_BUF_SIZE; i++)
+	{
+		decode_data[0] <<= 1;
+		decode_data[0] |=  (image_data[i] & 0x01);
+	}
+	return e_success;
+}
