@@ -288,11 +288,128 @@ Status decode_secret_string(char *password, DecodeInfo *decInfo)
                         fprintf(stderr,"Error: Incorrect passcode\n");
                         return e_failure;
                 }
-        }
-        else
-        {
-            fprintf(stderr, "Error: %s function failed\n","decode_lsb_to_byte()");
-            return e_failure;
-        }
+    }
+    else
+    {
+        fprintf(stderr, "Error: %s function failed\n","decode_lsb_to_byte()");
+        return e_failure;
     }
 }
+
+
+/* Decode file extension size from stego image
+ * Input: stego image info and output file
+ * Output: decode the extension size from stego image and store in image_data_size
+ * Return: e_success or e_failure
+ */
+Status decode_output_file_extn_size(DecodeInfo *decInfo)
+{
+    char file_size[DECODE_FILE_EXTN_SIZE];
+	fread(file_size, sizeof(char), DECODE_FILE_EXTN_SIZE, decInfo->fptr_stego_image);
+	if (ferror(decInfo->fptr_stego_image))
+    {
+         fprintf(stderr,"Error: While reading the data from stego image file\n");
+         clearerr(decInfo->fptr_stego_image);
+         return e_failure;
+    }
+
+	decInfo->image_size = 0;
+	for (uint i = 0; i < DECODE_FILE_EXTN_SIZE; i++)
+	{
+		decInfo->image_size <<= 1;
+		decInfo->image_size |= (uint) (file_size[i] & 0x01);
+	}
+	if (decode_output_file_extn(decInfo->image_size, decInfo) == e_failure)
+	{
+		fprintf(stderr,"Error: %s function failed\n","decode_output_file_extn()");
+		return e_failure;
+	}
+	return e_success;
+}
+
+/* Decode file extenstion from stego image
+ * Input: Extenstion Size and File info of stego image
+ * Output: Decodes the file extenstion and store in extn_output_file
+ * Return: e_success or e_failure
+ */
+Status decode_output_file_extn(uint extn_size, DecodeInfo *decInfo)
+{
+	for (uint i = 0; i < extn_size; i++)
+	{
+		fread(decInfo->image_data, sizeof(char), MAX_IMAGE_BUF_SIZE, decInfo->fptr_stego_image);
+		if (ferror(decInfo->fptr_stego_image))
+    	{
+        	fprintf(stderr,"Error: While reading the data from stego image file\n");
+         	clearerr(decInfo->fptr_stego_image);
+         	return e_failure;
+    	}
+		if (decode_lsb_to_byte(decInfo->decoded_data, decInfo->image_data) == e_success)
+		{
+			decInfo->output_file_extn[i] = decInfo->decoded_data[0];
+		}
+	}
+	return e_success;
+}
+
+
+/* Decode file size from stego image
+ * Input: FILE info of stego image and output file
+ * Output: Decodes the file image and store in image_data_size
+ * Return: e_success or e_failure
+ */
+Status decode_file_size(DecodeInfo *decInfo)
+{
+	char file_size[DECODE_FILE_SIZE];
+	fread(file_size, sizeof(char), DECODE_FILE_SIZE, decInfo->fptr_stego_image);
+	if (ferror(decInfo->fptr_stego_image))
+    {
+         fprintf(stderr,"Error: While reading the data from stego image file\n");
+         clearerr(decInfo->fptr_stego_image);
+         return e_failure;
+    }
+	decInfo->image_size = 0;
+	for (uint i = 0; i < DECODE_FILE_SIZE; i++)
+	{
+		decInfo->image_size <<= 1;
+		decInfo->image_size |= (uint) (file_size[i] & 0x01);
+	}
+	return e_success;
+}
+
+
+/* Decode file data from stego image
+ * Input: FILE info of stego image and output decode file
+ * Output: Write decode data in the output file
+ * Return: e_success or e_failure
+ */
+Status decode_data_to_file(DecodeInfo *decInfo)
+{
+	for (uint i = 0; i < decInfo->image_size; i++)
+	{
+		fread(decInfo->image_data, sizeof(char), MAX_IMAGE_BUF_SIZE, decInfo->fptr_stego_image);
+		if (ferror(decInfo->fptr_stego_image))
+    	{
+        	 fprintf(stderr,"Error: While reading the data from stego image file\n");
+         	clearerr(decInfo->fptr_stego_image);
+         	return e_failure;
+    	}
+		if(decode_lsb_to_byte(decInfo->decoded_data, decInfo->image_data) == e_success)
+		{
+			fwrite(decInfo->decoded_data, sizeof(char), 1, decInfo->fptr_output);
+			if (ferror(decInfo->fptr_stego_image))
+    		{
+        		fprintf(stderr,"Error: While reading the data from stego image file\n");
+         		clearerr(decInfo->fptr_stego_image);
+         		return e_failure;
+    		}
+
+		}
+		else
+		{
+			fprintf(stderr, "Error: %s function failed\n","decode_lsb_to_byte()");
+			return e_failure;
+		}
+	}
+	return e_success;
+}
+
