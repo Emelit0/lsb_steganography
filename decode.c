@@ -251,9 +251,9 @@ Status decode_secret_string(char *password, DecodeInfo *decInfo)
                     return e_failure;
                 }
 
-                    if (decode_lsb_to_byte(decInfo->decode_data, decInfo->image_data) == e_success)
+                    if (decode_lsb_to_byte(decInfo->decoded_data, decInfo->image_data) == e_success)
                     {
-                            if (decInfo->decode_data[0] == magic_string[i])
+                            if (decInfo->decoded_data[0] == password[i])
                             {
                                 continue;
                             }
@@ -277,9 +277,9 @@ Status decode_secret_string(char *password, DecodeInfo *decInfo)
                 clearerr(decInfo->fptr_stego_image);
                 return e_failure;
             }
-            if (decode_lsb_to_byte(decInfo->decode_data, decInfo->image_data) == e_success)
+            if (decode_lsb_to_byte(decInfo->decoded_data, decInfo->image_data) == e_success)
             {
-                if (decInfo->decode_data[0] == '*')
+                if (decInfo->decoded_data[0] == '*')
                 {
                         return e_success;
                 }
