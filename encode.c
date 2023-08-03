@@ -9,7 +9,7 @@
  * Output: operation type (encode/decode)
  * Return integer value of operation type
  */
-OperationType check_operation_type(char *argv[])
+OperationType check_operation(char *argv[])
 {
     if (strcmp(argv[1], "-e") == 0)
     {
@@ -55,7 +55,7 @@ Status validate_encode_args(int argc, char *argv[], EncodeInfo *encInfo)
 
     if (argc > 3)
     {
-        // Copy text file extenstion in secret_file_extn
+        // Copy text file extension in secret_file_extn
 			strncpy(encInfo->secret_file_extn, strstr(argv[3], "."), 4);
 			if ((strncmp(encInfo->secret_file_extn, ".txt", 4) == 0) || (strncmp(encInfo->secret_file_extn, ".c", 2) == 0) || (strncmp(encInfo->secret_file_extn
             , ".sh", 3) == 0))
@@ -72,7 +72,7 @@ Status validate_encode_args(int argc, char *argv[], EncodeInfo *encInfo)
 		{
 				fprintf(stderr,"Error: Arguments are missing\n");
 				printf("./lsb_steg: Encoding: ./lsb_steg -e <.bmp file> <.txt file> [Output file]\n");
-				printf("./lsb_steg: Deconding: ./lsb_steg -d <.bmp file> [output file]\n");
+				printf("./lsb_steg: Decoding: ./lsb_steg -d <.bmp file> [output file]\n");
 				return e_failure;
     }
         if (argc > 4)
@@ -150,18 +150,6 @@ uint image_size_for_bmp(FILE *fptr_image) {
     return width * height * bits_per_pixel;
 }
 
-/* Get file size in bytes
- * Input: File pointer
- * Output: Size of file in bytes
- */
-uint get_file_size(FILE *fptr)
-{
-        uint size;
-        fseek(fptr, 0L, SEEK_END);
-        size = ftell(fptr);
-        rewind(fptr);
-        return size;
-}
 
 /* Check the capacity of source image to handle secret data
  * Input: File info source image, stego image and secret file
@@ -262,7 +250,7 @@ Status do_encoding(EncodeInfo *encInfo)
                                                                 {
                                                                     printf("INFO: Done, encoded %s File data\n", encInfo->secret_fname);
 
-                                                                        // Copy remianing image data bytes from src to stego image
+                                                                        // Copy remaining image data bytes from src to stego image
                                                                         printf("INFO: Copying remaining image data\n");
                                                                         if (copy_remaining_img_data(encInfo->fptr_src_image, encInfo->fptr_stego_image) == e_success)
                                                                         {
@@ -463,7 +451,7 @@ Status encode_secret_string(const char *secret_string, EncodeInfo *encInfo)
                 }
         }
 
-        // Encode "*" after password or Enccode "*"
+        // Encode "*" after password or Encode "*"
         if ((strncpy(encInfo->secret_data, secret_string, 1)) == NULL)
         {
             return e_failure;
@@ -573,7 +561,7 @@ Status encode_secret_file_extn(EncodeInfo *encInfo)
 		fread(encInfo->image_data, sizeof(char), MAX_IMAGE_BUF_SIZE, encInfo->fptr_src_image);
 		if (ferror(encInfo->fptr_src_image))
 		{
-			fprintf(stderr,"Error: While reading the data from source nimage file\n");
+			fprintf(stderr,"Error: While reading the data from source image file\n");
 			clearerr(encInfo->fptr_src_image);
 			return e_failure;
 		}
