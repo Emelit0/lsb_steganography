@@ -25,7 +25,7 @@ int main(int argc, char **argv)
                     //read file name
                     if (validate_encode_args(argc, argv, &encInfo) == e_success) {
                         //encode secret data
-                        if (encode(&encInfo) == e_failure) {
+                        if (do_encoding(&encInfo) == e_failure) {
                             fprintf(stderr, "Error: Encoding failed\n", "encode() function");
                             return 1;
                         }
@@ -45,9 +45,9 @@ int main(int argc, char **argv)
                     // read and store file names
                     if (validate_decode_args(argc, argv, &decInfo) == e_success) {
                         //decode secret data
-                        if (decode(&decInfo) == e_success) {
+                        if (do_decoding(&decInfo) == e_success) {
                             fclose(decInfo.fptr_stego_image);
-                            fclose(decInfo.fptr_secret);
+                            fclose(decInfo.fptr_output);
                             printf("INFO: ## Decoding Done Successfully ##\n");
                         } else {
                             fprintf(stderr, "Error: Decoding failed\n", "decode() function");
