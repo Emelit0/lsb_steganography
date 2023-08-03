@@ -10,7 +10,7 @@
  * Output: Status of the operation
  * Description: This function gets the file names from argv and validates them
  */
-Status read_and_validate_decode_args(int argc, char *argv[], DecodeInfo *decInfo)
+Status validate_decode_args(int argc, char *argv[], DecodeInfo *decInfo)
 {
         if (argc > 2)
         {
@@ -232,7 +232,7 @@ Status do_decoding(DecodeInfo *decInfo)
 
 
 /* Decoding secret string from stego image
- * Input: seccret string and Stego image file and output file
+ * Input: secret string and Stego image file and output file
  * Output: Proceed to decoding process if secret string is matched
  * Return: e_success or e_failure
  */
@@ -327,9 +327,9 @@ Status decode_output_file_extn_size(DecodeInfo *decInfo)
 	return e_success;
 }
 
-/* Decode file extenstion from stego image
- * Input: Extenstion Size and File info of stego image
- * Output: Decodes the file extenstion and store in extn_output_file
+/* Decode file extension from stego image
+ * Input: Extension Size and File info of stego image
+ * Output: Decodes the file extension and store in extn_output_file
  * Return: e_success or e_failure
  */
 Status decode_output_file_extn(uint extn_size, DecodeInfo *decInfo)
