@@ -26,7 +26,7 @@ int main(int argc, char **argv)
                     if (validate_encode_args(argc, argv, &encInfo) == e_success) {
                         //encode secret data
                         if (do_encoding(&encInfo) == e_failure) {
-                            fprintf(stderr, "Error: Encoding failed\n", "encode() function");
+                            fprintf(stderr, "Error: %s Encoding failed\n", "encode() function");
                             return 1;
                         }
                         fclose(encInfo.fptr_src_image);
@@ -34,7 +34,7 @@ int main(int argc, char **argv)
                         fclose(encInfo.fptr_stego_image);
                         printf("INFO: ## Encoding Done Successfully ##\n");
                     } else {
-                        fprintf(stderr, "Error: Encoding failed\n", "validate_encode_args() function");
+                        fprintf(stderr, "Error: %s Encoding failed\n", "validate_encode_args() function");
                         return 1;
                     }
                 }
@@ -50,11 +50,11 @@ int main(int argc, char **argv)
                             fclose(decInfo.fptr_output);
                             printf("INFO: ## Decoding Done Successfully ##\n");
                         } else {
-                            fprintf(stderr, "Error: Decoding failed\n", "decode() function");
+                            fprintf(stderr, "Error: %s Decoding failed\n", "decode() function");
                             return 1;
                         }
                     } else {
-                        fprintf(stderr, "Error: Decoding failed\n", "validate_decode_args() function");
+                        fprintf(stderr, "Error: %s Decoding failed\n", "validate_decode_args() function");
                         return 1;
                     }
                 } else {
