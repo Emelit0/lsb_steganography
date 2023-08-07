@@ -3,15 +3,16 @@
 
 #include "types.h"
 #include <stdio.h>
+#include "common.h"
 
 /* Struct for information required for decoding
  * the stego image to new file
  * info about output  */
 
-// file extension size by decoding 32 bytes
+
 #define DECODE_FILE_EXTN_SIZE 32
-// get file size by decoding 32 bytes
-#define DECODE_BUF_SIZE 32
+
+#define DECODE_FILE_SIZE 32
 
 typedef struct
 {
@@ -25,8 +26,8 @@ typedef struct
 //    Decoded file info
     char *output_fname; // decoded file name
     FILE *fptr_output; // decoded file pointer
-    char decoded_data[MAX_DECODE_BUF_SIZE]; // decoded data buffer
-    char output_file_extn[MAX_DECODE_FILE_EXTN_SIZE]; // decoded file extension
+    char decoded_data[MAX_SECRET_BUF_SIZE]; // decoded data buffer
+    char output_file_extn[MAX_FILE_SUFFIX]; // decoded file extension
     long size_decoded_file; // size of decoded file
 
 //    Password
@@ -54,7 +55,7 @@ Status do_decoding(DecodeInfo *decInfo);
 /* Open Files required for decoding */
 Status open_files_decode(DecodeInfo *decInfo);
 /* Read and validate decode arguments argc & argv[] */
-Status read_and_validate_decode_args(int argc, char *argv[], DecodeInfo *decInfo);
+Status validate_decode_args(int argc, char *argv[], DecodeInfo *decInfo);
 
 
 #endif //LSB_STEGANOGRAPHY_DECODE_H

@@ -4,7 +4,7 @@
 
 #include "types.h" // user defined types
 #include <stdio.h> // common functions and constants
-#include
+#include "common.h"
 
 typedef struct {
     /* Source image info */
@@ -19,7 +19,7 @@ typedef struct {
     FILE *fptr_secret; // secret file pointer
     uint secret_size; // secret file size in bytes
     char secret_data[MAX_SECRET_BUF_SIZE]; // secret data buffer
-    char secret_file_extn[MAX_SECRET_FILE_EXTN_SIZE]; // secret file extension
+    char secret_file_extn[MAX_FILE_SUFFIX]; // secret file extension
     long size_secret_file; // size of secret file
 
 
@@ -35,17 +35,17 @@ typedef struct {
 
 
 /* Check operation type */
-OperationType check_operation_type(char *argv[]);
-/* Check for encode operation */
-Status check_operation(char *argv[]);
+OperationType check_operation(char *argv[]);
 /* Read and validate Encode args from argv */
-Status read_and_validate_encode_args(char *argv[], EncodeInfo *encInfo);
+Status validate_encode_args(int argc,char *argv[], EncodeInfo *encInfo);
+/* Check capacity of source image */
+Status check_capacity(EncodeInfo *encInfo);
 /* Perform the encoding */
 Status do_encoding(EncodeInfo *encInfo);
 /* Get File pointers for i/p and o/p files */
 Status open_encode_files(EncodeInfo *encInfo);
 /* Get image size */
-uint get_image_size_for_bmp(FILE *fptr_image);
+uint image_size_for_bmp(FILE *fptr_image);
 /* Get file size */
 uint get_file_size(FILE *fptr);
 /* Copy bmp image header */
@@ -68,11 +68,7 @@ Status encode_secret_data_to_image(char *secret_data, int size_secret_data, FILE
 Status encode_byte_to_lsb(char data, char *image_buffer);
 /* Encode secret file data size */
 Status encode_secret_file_data_size(long file_size, EncodeInfo *encInfo);
-/* Encode a byte into LSB of image data array */
-Status encode_byte_tolsb(char data, char *image_buffer);
 /* Copy remaining image bytes from src to stego image after encoding */
 Status copy_remaining_img_data(FILE *fptr_src, FILE *fptr_dest);
-/* Encode a byte into LSB of image data array */
-Status encode_byte_tolsb(char data, char *image_buffer);
 
 #endif //LSB_STEGANOGRAPHY_ENCODE_H
