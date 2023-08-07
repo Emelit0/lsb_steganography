@@ -3,6 +3,8 @@
 #include "types.h"
 #include "string.h"
 #include "encode.h"
+#include "stdlib.h"
+
 
 /* Check for operation type to be performed
  * Input: argv[] (command line argument)
@@ -222,6 +224,8 @@ Status do_encoding(EncodeInfo *encInfo)
 
                             //Encode secret string in destination image
                             printf("INFO: Encoding secret string signature\n");
+                            printf("INFO: Encoding password\n");
+
                                 if(encode_secret_string(encInfo->password, encInfo) == e_success)
                                 {
                                     printf("INFO: Done, encoded secret string signature\n");
@@ -421,10 +425,23 @@ Status encode_secret_string(const char *secret_string, EncodeInfo *encInfo)
 {
         if (secret_string != NULL)
         {
+            size_t secret_string_size = strlen(secret_string);
+            char* secret_data = malloc(secret_string_size + 1);
+
+            printf("INFO: Secret string size is %ld\n", secret_string_size);
+            printf("INFO: Secret string is %s\n", secret_string);
+            printf("INFO: Secret data is %s\n", secret_data);
+
+            if (secret_data == NULL)
+            {
+                fprintf(stderr, "ERROR: %s function failed while allocating memory\n", "malloc");
+                return e_failure;
+            }
+
                 for (uint i = 0; i < encInfo->password_size; i++)
                 {
                         // copy * to secret_data
-                       if ((strncpy(encInfo->secret_data, (secret_string + i), 1)) == NULL)
+                       if ((strncpy(encInfo->secret_data, (secret_string + i), secret_string_size + 1)) == NULL)
                         {
                             return e_failure;
                         }
@@ -581,6 +598,7 @@ Status encode_secret_file_extn(EncodeInfo *encInfo)
 	return e_success;
 }
 
+
 /* Encode secret file size data to stego image
  * Input: Files info
  * Output: Encode secret file size data to stego image
@@ -714,3 +732,4 @@ uint get_file_size(FILE *fptr)
     fseek(fptr, 0L, SEEK_SET);
     return size;
 }
+
