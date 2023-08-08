@@ -423,6 +423,7 @@ Status copy_bmp_header(FILE *fptr_src_image, FILE *fptr_dest_image)
  */
 Status encode_secret_string(const char *secret_string, EncodeInfo *encInfo)
 {
+    printf("INFO: Secret string is %s\n", secret_string);
         if (secret_string != NULL)
         {
             size_t secret_string_size = strlen(secret_string);

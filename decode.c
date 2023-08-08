@@ -4,6 +4,7 @@
 #include "types.h"
 #include "decode.h"
 #include<string.h>
+#include "common.h"
 
 /* Get File names and validate
  * Input: Stego image file name and output file name
@@ -429,3 +430,5 @@ Status decode_lsb_to_byte(char *decode_data, char *image_data)
 	}
 	return e_success;
 }
+
+
