@@ -21,3 +21,6 @@ lsb_steg -e <image_path> <file_to_hide> <output_image_name>
 lsb_steg -d <image_path> <output_file_name>
 ```
 
+# lsb_steganography
+#### _{This is a test}_
+>>>>>>> 6228f1683b2c9eb79fa81269f0ef8d9d9bb0c7b5
