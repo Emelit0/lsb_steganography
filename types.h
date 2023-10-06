@@ -1,20 +1,22 @@
 
-#ifndef LSB_STEGANOGRAPHY_TYPES_H
-#define LSB_STEGANOGRAPHY_TYPES_H
+#ifndef TYPES_H
+#define TYPES_H
 
 typedef unsigned int uint;
 
 //status will be used in main
-typedef enum {
+typedef enum
+{
     e_success,
     e_failure
 } Status;
 
 //operation types
-typedef enum {
+typedef enum
+{
     e_encode,
     e_decode,
     e_unsupported
 } OperationType;
 
-#endif //LSB_STEGANOGRAPHY_TYPES_H
+#endif //TYPES_H

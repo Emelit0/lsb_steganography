@@ -1,12 +1,9 @@
 // Implementation of a c program tha uses lsb steganography to hide a message in a bitmap image
 
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
-#include "types.h"
 #include "encode.h"
 #include "decode.h"
+#include "types.h"
 
 
 int main(int argc, char **argv)
@@ -15,7 +12,7 @@ int main(int argc, char **argv)
        // createSecret();
 
             // validate input arguments
-            if (argc > 1 && argc < 8) {
+            if (argc > 1 && argc < 6) {
                 //validate operation
 
                 //Encoding

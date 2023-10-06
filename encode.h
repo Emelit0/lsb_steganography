@@ -1,10 +1,9 @@
 
-#ifndef LSB_STEGANOGRAPHY_ENCODE_H
-#define LSB_STEGANOGRAPHY_ENCODE_H
+#ifndef ENCODE_H
+#define ENCODE_H
 
-#include "types.h" // user defined types
-#include <stdio.h> // common functions and constants
 #include "common.h"
+#include "types.h"
 
 typedef struct {
     /* Source image info */
@@ -71,4 +70,4 @@ Status encode_secret_file_data_size(long file_size, EncodeInfo *encInfo);
 /* Copy remaining image bytes from src to stego image after encoding */
 Status copy_remaining_img_data(FILE *fptr_src, FILE *fptr_dest);
 
-#endif //LSB_STEGANOGRAPHY_ENCODE_H
+#endif //ENCODE_H

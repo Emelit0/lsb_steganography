@@ -2,7 +2,6 @@
 #define LSB_STEGANOGRAPHY_DECODE_H
 
 #include "types.h"
-#include <stdio.h>
 #include "common.h"
 
 /* Struct for information required for decoding

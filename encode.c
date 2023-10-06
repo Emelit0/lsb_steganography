@@ -1,9 +1,7 @@
-#include "stdio.h"
-#define MAX_MESSAGE_LENGTH 100000000
+#include <stdio.h>
 #include "types.h"
-#include "string.h"
+#include <string.h>
 #include "encode.h"
-#include "stdlib.h"
 
 
 /* Check for operation type to be performed
@@ -13,11 +11,11 @@
  */
 OperationType check_operation(char *argv[])
 {
-    if (strcmp(argv[1], "-e") == 0)
+    if ((strcmp(argv[1], "-e")) == 0)
     {
         return e_encode;
     }
-    else if (strcmp(argv[1], "-d") == 0)
+    else if ((strcmp(argv[1], "-d")) == 0)
     {
         return e_decode;
     }
@@ -29,7 +27,7 @@ OperationType check_operation(char *argv[])
 
 /* Validate command line arguments
  * Input: command line arguments count and arguments with file name info
- * Output: file names stored in encodeInfo structure
+ * Output: file names stored in encInfo structure
  * Return: Status of operation e_success or e_failure
  */
 Status validate_encode_args(int argc, char *argv[], EncodeInfo *encInfo)
@@ -41,9 +39,10 @@ Status validate_encode_args(int argc, char *argv[], EncodeInfo *encInfo)
         {
             encInfo->src_image_fname = argv[2];
             printf("Image file name: %s\n", encInfo->src_image_fname);
-        } else
+        }
+        else
         {
-            fprintf(stderr,"Error: Image file is not .bmp type\n", argv[2]);
+            fprintf(stderr,"Error: Image file is not .bmp type %s\n", argv[2]);
             return e_failure;
         }
     }
@@ -132,6 +131,7 @@ Status validate_encode_args(int argc, char *argv[], EncodeInfo *encInfo)
  * and height is stored after(22) that. size is 4 bytes.
  */
 uint image_size_for_bmp(FILE *fptr_image) {
+
     uint width, height, bits_per_pixel;
 
     //seek to 18th byte
@@ -145,7 +145,7 @@ uint image_size_for_bmp(FILE *fptr_image) {
 
     //Read bits per pixel (short int)
     fseek(fptr_image, 2L, SEEK_CUR);
-    fread(&bits_per_pixel, sizeof(short int), 1, fptr_image);
+    fread(&bits_per_pixel, sizeof(short), 1, fptr_image);
     rewind(fptr_image);
 
     //return max image capacity
@@ -179,10 +179,9 @@ Status do_encoding(EncodeInfo *encInfo)
     printf("INFO: Opening required files\n");
     if (open_encode_files(encInfo) == e_success)
     {
-        printf("INFO: Opened required files\n");
         printf("INFO: ## Encoding in progress ##\n");
         // check size of secret file
-        printf("INFO: Checking for size\n");
+        printf("INFO: Checking for size: %s\n", encInfo->secret_fname);
         encInfo->size_secret_file = get_file_size(encInfo->fptr_secret);
         if (encInfo->size_secret_file)
         {
@@ -224,7 +223,7 @@ Status do_encoding(EncodeInfo *encInfo)
 
                             //Encode secret string in destination image
                             printf("INFO: Encoding secret string signature\n");
-                            printf("INFO: Encoding password\n");
+                            printf("test\n");
 
                                 if(encode_secret_string(encInfo->password, encInfo) == e_success)
                                 {
@@ -330,53 +329,53 @@ Status do_encoding(EncodeInfo *encInfo)
  * Output: File pointers to the above files
  * Return Value: e_success or e_failure, on file errors
  */
-Status open_encode_files(EncodeInfo *encodeInfo)
+Status open_encode_files(EncodeInfo *encInfo)
 {
     static int open_count = 0;
     if (open_count == 0)
     {
             open_count++;
             //open src image file
-            encodeInfo->fptr_src_image = fopen(encodeInfo->src_image_fname, "r");
+            encInfo->fptr_src_image = fopen(encInfo->src_image_fname, "r");
             // Do Error handling
-            if (encodeInfo->fptr_src_image == NULL)
+            if (encInfo->fptr_src_image == NULL)
             {
                     perror("fopen");
-                    fprintf(stderr, "ERROR: Unable to open file %s\n", encodeInfo->src_image_fname);
+                    fprintf(stderr, "ERROR: Unable to open file %s\n", encInfo->src_image_fname);
                     return e_failure;
             }
                 else
                 {
-                    printf("INFO: Opened %s for reading\n", encodeInfo->src_image_fname);
+                    printf("INFO: Opened %s for reading\n", encInfo->src_image_fname);
                 }
             //Secret file
-            encodeInfo->fptr_secret = fopen(encodeInfo->secret_fname, "r");
+            encInfo->fptr_secret = fopen(encInfo->secret_fname, "r");
             // Do Error handling
-            if (encodeInfo->fptr_secret == NULL)
+            if (encInfo->fptr_secret == NULL)
             {
                     perror("fopen");
-                    fprintf(stderr, "ERROR: Unable to open file %s\n", encodeInfo->secret_fname);
+                    fprintf(stderr, "ERROR: Unable to open file %s\n", encInfo->secret_fname);
                     return e_failure;
             }
                 else
                 {
-                    printf("INFO: Opened %s for reading\n", encodeInfo->secret_fname);
+                    printf("INFO: Opened %s for reading\n", encInfo->secret_fname);
                 }
     }
     else
     {
      //open stego image file
-                encodeInfo->fptr_stego_image = fopen(encodeInfo->stego_image_fname, "w");
+                encInfo->fptr_stego_image = fopen(encInfo->stego_image_fname, "w");
                 // Do Error handling
-                if (encodeInfo->fptr_stego_image == NULL)
+                if (encInfo->fptr_stego_image == NULL)
                 {
                       perror("fopen");
-                      fprintf(stderr, "ERROR: Unable to open file %s\n", encodeInfo->stego_image_fname);
+                      fprintf(stderr, "ERROR: Unable to open file %s\n", encInfo->stego_image_fname);
                       return e_failure;
                 }
                  else
                  {
-                      printf("INFO: Opened %s for writing\n", encodeInfo->stego_image_fname);
+                      printf("INFO: Opened %s for writing\n", encInfo->stego_image_fname);
                  }
     }
 
@@ -423,27 +422,14 @@ Status copy_bmp_header(FILE *fptr_src_image, FILE *fptr_dest_image)
  */
 Status encode_secret_string(const char *secret_string, EncodeInfo *encInfo)
 {
-    printf("INFO: Secret string is %s\n", secret_string);
         if (secret_string != NULL)
         {
-            size_t secret_string_size = strlen(secret_string);
-            char* secret_data = malloc(secret_string_size + 1);
-
-            printf("INFO: Secret string size is %ld\n", secret_string_size);
-            printf("INFO: Secret string is %s\n", secret_string);
-            printf("INFO: Secret data is %s\n", secret_data);
-
-            if (secret_data == NULL)
-            {
-                fprintf(stderr, "ERROR: %s function failed while allocating memory\n", "malloc");
-                return e_failure;
-            }
-
                 for (uint i = 0; i < encInfo->password_size; i++)
                 {
                         // copy * to secret_data
-                       if ((strncpy(encInfo->secret_data, (secret_string + i), secret_string_size + 1)) == NULL)
+                       if ((strncpy(encInfo->secret_data, (secret_string + i), 1)) == NULL)
                         {
+                            printf("Error: %s function failed\n", "strncpy()");
                             return e_failure;
                         }
                         // Divide secrete_data to 8 bits i.e MSB at 0th index and LSB at 7th index
@@ -470,7 +456,7 @@ Status encode_secret_string(const char *secret_string, EncodeInfo *encInfo)
         }
 
         // Encode "*" after password or Encode "*"
-        if ((strncpy(encInfo->secret_data, secret_string, 1)) == NULL)
+        if ((strncpy(encInfo->secret_data, MAGIC_STRING, 1)) == NULL)
         {
             return e_failure;
         }
